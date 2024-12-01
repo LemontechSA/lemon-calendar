@@ -1,0 +1,40 @@
+services:
+  web:
+    build:
+      context: .
+      target: development
+    ports:
+      - "3000:3000"
+    command: npm run dev
+    volumes:
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      - db
+    env_file:
+      - .env
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: calendar
+      POSTGRES_USER: dev
+      POSTGRES_PASSWORD: dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/mysql
+
+  db-ui:
+    build:
+      context: .
+      target: development
+    ports:
+      - "3001:3001"
+    command: npx drizzle-kit studio --host=0.0.0.0 --port=3001
+    depends_on:
+      - db
+    env_file:
+      - .env
+
+volumes:
+  db-data:
