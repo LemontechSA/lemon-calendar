@@ -1,36 +1,60 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
+# Lemon Calendar
 
-First, run the development server:
+## Project setup
+
+1. Copy the environment file
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cp .env.sample .env
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Spin up the docker containers
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+docker compose up -d
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+3. Run database migrations (inside the container)
 
-## Learn More
+```bash
+docker exec web sh
+> npm run db:migrate
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Database Client
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+This projects comes with Drizzle Studio installed. You can access the client UI from the following url: https://local.drizzle.studio/?host=127.0.0.1&port=3001
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## API Docs
 
-## Deploy on Vercel
+### List all events
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+curl http://localhost:3000/api/events
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Get event details
+
+```bash
+curl http://localhost:3000/api/events/1
+```
+
+### Create a new event
+
+```bash
+curl -d '{"title":"My event", "location":"Santiago", "startAt": "2024-12-01T08:00:00", "endAt": "2024-12-01T10:00:00"}' -H "Content-Type: application/json" -X POST http://localhost:3000/api/events
+```
+
+### Update an existing event
+
+```bash
+curl -d '{"description":"My event description"}' -H "Content-Type: application/json" -X POST http://localhost:3000/api/events/1
+```
+
+### Delete an event
+
+```bash
+curl -X DELETE http://localhost:3000/api/events/1
+```
